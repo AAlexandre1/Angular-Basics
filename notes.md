@@ -119,9 +119,115 @@ Two-Way-Binding [(ngModel)] = "data"
 # String interpolation
 Data binding
 {{ serverID }}
-Only works for something that returns a string in the end, or that can be converted into a string. You can also hard code a string {{ 'server }} Can also be used to call a method that returns a string
+Only works for something that returns a string in the end, or that can be converted into a string. You can also hard code a string {{ 'server' }} Can also be used to call a method that returns a string
 {{ setServerStatus() }}
+Can only be used within a normal template. Can not be used within another expression of that template.
 
 
 # Property Binding
-Square brackets are used for binding a property in HTML to code in JavaScript. 
+Square brackets are used for binding a property of an HTML element to code in JavaScript.
+<button [disabled = "!allowNewServer"]></button>
+Do not use curly braces. Can also be used to call a method. This is not an HTML attribute, it is a syntax recognized by Angular.
+
+
+# Property Binding vs String Interpolation
+String interpolation will output the value of a property as a string
+<p> {{ allowNewServer }} </p>
+Use string interpolation to output text to something in your template.
+
+Property binding will bind a property of an element to a property in your javaScript
+<p [innerText = "allowNewServer"]></p>
+Use property bindng to change the property of an HTML element, directive, or component.
+
+NEVER mix property binding and string interpolation. Property binidng uses a syntax recognized by Angular. Between the quotation marks TypeScript can be used. Using string interpolation will break it. String interpolation can only be used within a normal template. It can not be used within another expression of that template.
+
+
+# Event Binding
+(eventName) = "callMethod()" 
+<button (click) = "onCreateServer()">Add Server </button>
+Allows JavaScript to listen to events.
+Create a property in the ts file. Create a method. Using on at the beginning of the method name, i.e. onCreateServer, helps make it clear that the user will call the method. You can set the property to something. Use event binding to call the method. Use parentheses around the event you want to trigger the method. Set it equal to the method you want to execute. You can put the code directly there, but it is not a good idea. 
+
+$event is a reserved variable name that can be used with event binding. $event gives us the event data that is emitted with that event. The type of event is Event. (event: Event) In the method we can target a part of the event.
+this.serverName = event.target.value;
+If you are unsure what to target, log the event to see what you want to target.
+Not every element type will have a value. An input element will have a value. In order to specify that the element is type input, it can be explicitly informed.
+(<HTMLInputElement>.target).value
+This informs TypeScript that the type of the HTML element is an HTML input element. 
+
+# Two Way Databinding
+Combines event bidning and property binding. Combine the syntaxes of square brackets for property binding and parentheses for event binding. 
+Must use a special directive, ngModel.
+To use ngModel the FormsModule from angular/forms needs to be added to the imports[] array under @NgModule in the AppModule ts file.
+import { FormsModule } from '@angular/forms'; 
+Reacts to events in both directions. 
+
+# Directives
+Directive are instructions in the DOM. Components are directives with a template. Component slectors instruct Angular to add the content of the component template and the logic in the TypeSCript code in the place where the selector is. 
+
+# Custom Directives
+You can make custom directives. 
+using the directive decorator a directive can be defined. 
+@Directive({
+   selector:'[directiveSelectorName]
+})
+The directive is then exported.
+export class directiveSelector Name {
+   directive code here
+}
+Directive are typically added with an attribute selector. The selector of a directive can be configured just like the selector of a component. A CSS class, or element style, can also be a a directive.
+
+
+# Built-in Directives
+Built in directives start with ng.
+Structural directives change the structure of the DOM by adding or removing elements.
+Attribute directives only change the element they are added to, and they look like normal HTML attributes. 
+
+# ngIf
+ngIf is a structural directive. It determines whether an element is added or not. When set to false the element is not hidden, it is not there. When set to true the elemnt is then added to the DOM The condition for adding the element is placed between the quotation marks. ngIf requires that the condition returns a boolean. 
+Must use an asterisk before ngIf. 
+<p *ngIf = "condition">Hello<p>
+
+# ngIf Adding an else condition
+Using ngIf else adds and else condition to ngIf.
+To create an alternative use ng-template and a local reference.
+<ng-template #noServer>
+<p>Alternative text here.</p>
+</ng-template>
+Then add the else after the ngIf condition.
+<p *ngIf = "serverCreated; else noServer">Original text here.</p>
+Now if the condition is met the element is shown, if it is not met the the alternative template is shown instead. Can also use ngIf with a reverse check. ngIf = "!condition"
+
+# ngStyle
+ngStyle is an attribute directive. Allows you to dynamically update the style of an element. 
+<p [ngStyle] = "{bacgroundColor: color}">
+The square brackets are not a part of the directive name, they idicate that we are binding to a property of the directive. The property we are binding to is also called ngStyle. The ngStyle property expects a Javascript object. Then we define the key-value pair. The style name is the key, and the value of the style is the value. When making a JavaScript property name, the key, use 'background-color' in quotes,
+<p [ngStyle] = "{'bacground-color': color}">
+or use backgroundColor with camel case.
+<p [ngStyle] = "{bacgroundColor: color}">
+The value of the property can be hard coded in. 
+<p [ngStyle] = "{bacgroundColor: blue}">
+The value of the property can be a method that will return the correct value. 
+<p [ngStyle] = "{bacgroundColor: getColor()}">
+
+
+# ngClass
+ngClass is an attribute directive. It allows us to dynamically add or remove CSS classes.
+<p [ngClass] = "{online: this.serverStatus === 'onine'}" >
+Reuqires property binding
+The key should be the CSS class name and the value is the condition that determines if the class should be added to the element or not. If the class name has a dash wrap it in single quotes.
+<p [ngClass] = "{'status-online': this.serverStatus === 'onine'}" >
+
+
+# ngFor
+ngFor is a structural directive. Allows you to create a node for each item in an array.
+<p *ngFor = "let item of items "></p>
+Remember to use an asterisk because this a structural directive. The name of the item does not matter. Once it is created here it becomes a variable that can be used elsewhere in the template. The name of the array has to match the array name in the TypeScript code. 
+<p *ngFor = "let crazyChocolateCakes of books "></p>
+
+# Getting index when using ngFor
+*ngFor = "count of items; let i = index"
+by using index you can use more than just incrementing or decrement numbrs as a check for ngStyle and ngClass. Using index will allow you access to the index of the current iteration. Index starts at zero, the fifth item will have the index of 4. The index can be bound to any variable you want. 
+*ngFor = "cake of bakeryItems; let baking = index"
+
+
