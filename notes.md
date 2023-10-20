@@ -101,7 +101,7 @@ In the HTML code/template an element selector would look like:
 <app-server></app-server>
 An attribute selector would look like:
 <div class="app-server"></div>
-While an attribute can be used you can not use ID as a selector nor psuedo-selectore such as hover
+While an attribute can be used you can not use ID as a selector nor psuedo-selector such as hover
 
 
 # Databinding
